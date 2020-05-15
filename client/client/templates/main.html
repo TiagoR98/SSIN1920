@@ -19,7 +19,7 @@
 
     <form id="loginForm" action='http://{{ auth_server_host }}/authorize' method="get" onsubmit="myFunction();return false">
         <input type="hidden" value={{ redirect_uri }} name="redirect_uri"/>
-        <input type="hidden" value="iojoijoijoij" name="state"/>
+        <input type="hidden" value={{ state }} name="state"/>
         <input type="hidden" value="code" name="response_type"/>
         <input type="hidden" value={{ client_id }} name="client_id"/>
         <button type="submit">Authenticate in server</button>
