@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import serializers, viewsets, routers, permissions
+from rest_framework import serializers, viewsets, routers, permissions, exceptions
 from .models import Resource
 import requests
 import jwt
@@ -12,6 +12,17 @@ class ResourceSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'url', 'data']
 
 class ResourcePermission(permissions.BasePermission):
+
+    perms_map = {
+        'GET': "read",
+        'OPTIONS': "read",
+        'HEAD': "",
+        'POST': "write",
+        'PUT': "write",
+        'PATCH': "write",
+        'DELETE': "delete",
+    }
+
     def has_permission(self, request, view):
         if 'Authorization' not in request.headers:
             return False
@@ -32,14 +43,11 @@ class ResourcePermission(permissions.BasePermission):
         if 'scope' not in token:
             return False
 
-        scopes = token['scope'].split()
+        if request.method not in self.perms_map:
+            raise exceptions.MethodNotAllowed(request.method)
 
-        if request.method is "GET":
-            return ("read" in scopes)
-        elif request.method is "PUT":
-            return ("write" in scopes)
-
-        return False
+        scopes = token['scope'].split().append("")
+        return (self.perms_map[request.method] in scopes)
 
 class ResourceViewSet(viewsets.ModelViewSet):
     """
