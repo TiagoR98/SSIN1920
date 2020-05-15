@@ -16,7 +16,7 @@
         {% endfor %}
     </ul>
 
-    <form action='/authorize?redirect_uri={{ redirect_uri }}&state={{ state }}' method="post">
+    <form action='/authorize?redirect_uri={{ redirect_uri }}&state={{ state }}&client_id={{ client_id }}&scope={{ scope }}' method="post">
         <label for="uname"><b>Username</b></label>
         <input type="text" placeholder="Enter Username" name="username" required>
 
