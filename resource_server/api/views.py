@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import serializers, viewsets, routers, permissions
 from .models import Resource
 import requests
+import jwt
 
 # Create your views here.
 
@@ -15,11 +16,20 @@ class ResourcePermission(permissions.BasePermission):
         if 'Authorization' not in request.headers:
             return False
 
-        r = requests.post('http://auth-server:8000/api/token/verify/', data={"token": request.headers['Authorization']})
+        token_string = request.headers['Authorization']
+        token = jwt.decode(token_string, verify=False)
+        print(token)
+
+        r = requests.post('http://auth-server:8000/api/token/verify/', data={"token": token_string})
         if r.status_code != 200:
             return False
 
-        return (request.method in permissions.SAFE_METHODS)
+        if 'token_type' not in token:
+            return False
+        elif token['token_type'] != "access":
+            return False
+
+        return True
 
 class ResourceViewSet(viewsets.ModelViewSet):
     """
