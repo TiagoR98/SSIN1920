@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect
 
 client_id = "client_app"
 
-auth_server_url = "192.168.1.127:8000"
+auth_server_url = "localhost:8000"
 
 class InitialView(APIView):
 
