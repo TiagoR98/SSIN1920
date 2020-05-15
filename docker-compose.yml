@@ -3,7 +3,7 @@ version: '3'
 services:
     auth_server:
         build: ./auth_server/
-        command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver"
+        command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0:8000"
         restart: unless-stopped
         ports:
             - "8000:8000"
@@ -12,7 +12,7 @@ services:
     
     client:
         build: ./client/
-        command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver"
+        command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0:8000"
         restart: unless-stopped
         ports:
             - "8001:8000"
@@ -21,7 +21,7 @@ services:
     
     resource_server:
         build: resource_server/
-        command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver"
+        command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0:8000"
         restart: unless-stopped
         ports:
             - "8002:8000"
