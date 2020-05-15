@@ -2,9 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>$Title$</title>
+    <title>Authorize</title>
 </head>
 <body>
-$END$
+
+    <h1>Authorize application {{ client_id }} to access to your account</h1>
+
+    <h3>The application will gain the following permissions</h3>
+
+    <ul>
+        {% for permission in scope_list %}
+            <li>{{ permission }}</li>
+        {% endfor %}
+    </ul>
+
+    <form action='/authorize?redirect_uri={{ redirect_uri }}&state={{ state }}' method="post">
+        <label for="uname"><b>Username</b></label>
+        <input type="text" placeholder="Enter Username" name="username" required>
+
+        <label for="psw"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="password" required>
+
+        <button type="submit">Login</button>
+    </form>
+
 </body>
 </html>

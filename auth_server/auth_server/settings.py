@@ -25,12 +25,13 @@ SECRET_KEY = '8#2f(^zh3gd&x&vorb$b1&$8g51n2#1jq(6(g*jvrckrxlbq9^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.127']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'auth_server',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -54,7 +55,7 @@ ROOT_URLCONF = 'auth_server.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'auth_server/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
