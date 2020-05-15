@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+    auth_server:
+        build: ./auth_server/
+        command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver"
+        restart: unless-stopped
+        ports:
+            - "8000:8000"
+        volumes:
+            - ./auth_server/:/code
+    
+    client:
+        build: ./client/
+        command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver"
+        restart: unless-stopped
+        ports:
+            - "8001:8000"
+        volumes:
+            - ./client/:/code
+    
+    resource_server:
+        build: resource_server/
+        command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver"
+        restart: unless-stopped
+        ports:
+            - "8002:8000"
+        volumes:
+            - ./resource_server/:/code
