@@ -1,1 +1,4 @@
 Django==2.2.*
+djangorestframework==3.11.0
+djangorestframework-simplejwt
+requests
