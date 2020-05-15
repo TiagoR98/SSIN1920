@@ -15,8 +15,8 @@ class ResourcePermission(permissions.BasePermission):
 
     perms_map = {
         'GET': "read",
-        'OPTIONS': "read",
-        'HEAD': "",
+        'OPTIONS': "",
+        'HEAD': "read",
         'POST': "write",
         'PUT': "write",
         'PATCH': "write",
