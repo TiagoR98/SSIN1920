@@ -29,7 +29,17 @@ class ResourcePermission(permissions.BasePermission):
         elif token['token_type'] != "access":
             return False
 
-        return True
+        if 'scope' not in token:
+            return False
+
+        scopes = token['scope'].split()
+
+        if request.method is "GET":
+            return ("read" in scopes)
+        elif request.method is "PUT":
+            return ("write" in scopes)
+
+        return False
 
 class ResourceViewSet(viewsets.ModelViewSet):
     """
