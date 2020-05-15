@@ -21,9 +21,11 @@ class AuthorizationView(APIView):
         if not AuthorizationView.validate_authorization_request(request):
             return redirect("{}?error={}".format(request.GET['redirect_uri'], "invalid_request"))
 
+        print(request.GET['scope'])
         received_scopes = request.GET['scope'].split(" ")
+        received_scopes = received_scopes[:-1]
 
-        if not all(elem in AuthorizationView.scopes  for elem in received_scopes):
+        if not all(elem in AuthorizationView.scopes  for elem in received_scopes) or len(received_scopes) == 0:
             return redirect("{}?error={}".format(request.GET['redirect_uri'], "invalid_scope"))
 
         if request.GET['response_type'] != "code":

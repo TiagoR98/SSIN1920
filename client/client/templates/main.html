@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ client_id }}</title>
+</head>
+<body>
+
+    <h1>Welcome to the {{ client_id }} application</h1>
+
+    <h3>Click to login to our authentication server</h3>
+
+    <input type="checkbox" id="read" name="read" value="Read" checked>
+    <label for="vehicle1"> Read</label><br>
+    <input type="checkbox" id="write" name="write" value="Write" checked>
+    <label for="vehicle2"> Write</label><br>
+    <input type="checkbox" id="delete" name="delete" value="Delete" checked>
+    <label for="vehicle3"> Delete</label><br>
+
+    <form id="loginForm" action='http://{{ auth_server_host }}/authorize' method="get" onsubmit="myFunction();return false">
+        <input type="hidden" value={{ redirect_uri }} name="redirect_uri"/>
+        <input type="hidden" value="iojoijoijoij" name="state"/>
+        <input type="hidden" value="code" name="response_type"/>
+        <input type="hidden" value={{ client_id }} name="client_id"/>
+        <button type="submit">Authenticate in server</button>
+    </form>
+
+    <script>
+        function myFunction() {
+           var form=document.getElementById('loginForm');
+
+           var scope = "";
+
+           var readChck = document.getElementById('read');
+           var writeChck = document.getElementById('write');
+           var deleteChck = document.getElementById('delete');
+
+           if(readChck.checked)
+                scope+=readChck.id + " ";
+           if(writeChck.checked)
+                scope+=writeChck.id + " ";
+           if(deleteChck.checked)
+                scope+=deleteChck.id + " ";
+
+            var input = document.createElement('input');
+            input.setAttribute('name', "scope");
+            input.setAttribute('value', scope);
+            input.setAttribute('type', "hidden")
+
+            form.appendChild(input);
+
+            form.submit();
+        }
+    </script>
+
+</body>
+</html>

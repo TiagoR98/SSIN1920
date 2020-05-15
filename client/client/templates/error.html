@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ client_id }} - Error</title>
+</head>
+<body>
+
+    <h1>An error occurred while trying to autenticate on autentication server</h1>
+
+    <h3>{{ error }}</h3>
+
+    <form action='http://{{ host }}' method="get" >
+        <button type="submit">Home</button>
+    </form>
+
+</body>
+</html>

@@ -25,7 +25,7 @@ SECRET_KEY = '*tm(i(n+2i=$8a6sl)1zw@s(b+dp_2(d1s6vz0#&xc1s)mgls7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.127']
 
 
 # Application definition
@@ -54,7 +54,7 @@ ROOT_URLCONF = 'client.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'client/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
