@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ client_id }}</title>
+</head>
+<body>
+
+    <h1>Welcome back!</h1>
+
+    <h2>Access token received:</h2>
+    <h3>Access: </h3><p>{{ access }}</p>
+    <h3>Refresh: </h3><p>{{ refresh }}</p>
+
+    <form action='http://{{ auth_server_host }}/token/refresh/' method="post">
+        <label>Click here to refresh the Access token</label>
+        <input type="hidden" name="redirect_uri" value="{{ redirect_uri }}"></input>
+        <input type="hidden" name="client_id" value="{{ client_id }}"></input>
+        <input type="hidden" name="client_secret" value="{{ client_secret }}"></input>
+        <input type="hidden" name="refresh_token" value="{{ refresh }}"></input>
+        <button type="submit">Refresh token</button>
+    </form>
+
+</body>
+</html>

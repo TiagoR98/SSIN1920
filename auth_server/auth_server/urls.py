@@ -21,10 +21,12 @@ from auth_server import views
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),    # Remove when auth is done
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('token', views.GenerateTokenView.as_view()),
+    path('token/refresh/', views.RefreshTokenView.as_view()),
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
     path('authorize',views.AuthorizationView.as_view()),
-    path('new-user',views.AddAccountView.as_view())
+    path('new-user',views.AddAccountView.as_view()),
+
+    path('new-client',views.AddClientView.as_view())
 ]

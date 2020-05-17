@@ -20,5 +20,7 @@ from client import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.InitialView.as_view()),
-    path('get-token', views.GetTokenView.as_view())
+    path('refresh-token/', views.RefreshTokenView.as_view()),
+    path('get-token/', views.GetTokenView.as_view()),
+    path('get-resource/', views.GetResourceView.as_view())
 ]

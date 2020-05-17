@@ -8,8 +8,13 @@ from rest_framework.views import APIView
 from django.shortcuts import render, redirect
 
 from auth_server.services.login_service import LoginService
+from auth_server.services.client_service import ClientService
+from auth_server.services.auth_code_service import AuthCodeService
+from auth_server.services.token_service import TokenService
 from auth_server.models import AuthorizationCode
 
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 class AuthorizationView(APIView):
 
@@ -83,3 +88,51 @@ class AddAccountView(APIView):
         LoginService.add_credentials(request.POST['username'], request.POST['password'])
 
         return HttpResponse(status=204)
+
+class AddClientView(APIView):
+
+    def post(self, request):
+        ClientService.add_credentials(request.POST['id'], request.POST['secret'])
+
+        return HttpResponse(status=204)
+
+class GenerateTokenView(APIView):
+
+    def post(self, request):
+        client_id = request.POST['client_id']
+        client_secret = request.POST['client_secret']
+        code = request.POST['code']
+        redirect_uri = request.POST['redirect_uri']
+
+        if not ClientService.check_credentials(client_id, client_secret):
+            return redirect("{}?error={}".format(redirect_uri, "invalid_client_credentials"))
+
+        if not AuthCodeService.check_code(code):
+            return redirect("{}?error={}".format(redirect_uri, "invalid_auth_code"))
+
+        client = ClientService.get_client(client_id)
+        
+        token = TokenService.add_token(client)
+
+        return redirect("{}?access={}&refresh={}".format(redirect_uri, token.access, token.refresh))
+
+
+class RefreshTokenView(APIView):
+
+    def post(self, request):
+        client_id = request.POST['client_id']
+        client_secret = request.POST['client_secret']
+        refresh_token = request.POST['refresh_token']
+        redirect_uri = request.POST['redirect_uri']
+
+        if not ClientService.check_credentials(client_id, client_secret):
+            return redirect("{}?error={}".format(redirect_uri, "invalid_client_credentials"))
+
+        client = ClientService.get_client(client_id)
+
+        if not TokenService.check_refresh_token(refresh_token, client):
+            return redirect("{}?error={}".format(redirect_uri, "invalid_refresh_token"))
+
+        token = TokenService.refresh_token(refresh_token, client)
+
+        return redirect("{}?access={}&refresh={}".format(redirect_uri, token.access, token.refresh))

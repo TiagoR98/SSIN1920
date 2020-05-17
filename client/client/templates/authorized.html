@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ client_id }}</title>
+</head>
+<body>
+
+    <h1>Welcome back!</h1>
+
+    <p>Authorization code {{ code }} received.</p>
+
+    <form action='http://{{ auth_server_host }}/token' method="post">
+        <label>Click here to request the Access token</label>
+        <input type="hidden" name="code" value="{{ code }}"></input>
+        <input type="hidden" name="redirect_uri" value="{{ redirect_uri }}"></input>
+        <input type="hidden" name="client_id" value="{{ client_id }}"></input>
+        <input type="hidden" name="client_secret" value="{{ client_secret }}"></input>
+        <button type="submit">Request</button>
+    </form>
+
+</body>
+</html>
