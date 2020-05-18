@@ -16,24 +16,30 @@ from auth_server.models import AuthorizationCode
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+logs = [
+    "Auth server service initiated.",
+]
+
 class AuthorizationView(APIView):
 
     scopes = ["read","write","delete"]
 
     def get(self, request):
-        error = ""
+        updateLogs("[GET] "+request.path)
 
         if not AuthorizationView.validate_authorization_request(request):
+            updateLogs("Invalid authorization request")
             return redirect("{}?error={}".format(request.GET['redirect_uri'], "invalid_request"))
 
-        print(request.GET['scope'])
         received_scopes = request.GET['scope'].split(" ")
         received_scopes = received_scopes[:-1]
 
         if not all(elem in AuthorizationView.scopes  for elem in received_scopes) or len(received_scopes) == 0:
+            updateLogs("Invalid scope")
             return redirect("{}?error={}".format(request.GET['redirect_uri'], "invalid_scope"))
 
         if request.GET['response_type'] != "code":
+            updateLogs("Unsupported response type")
             return redirect("{}?error={}".format(request.GET['redirect_uri'], "unsupported_response_type"))
 
         return render(request, 'authorize.html', {'client_id': request.GET['client_id'],
@@ -44,10 +50,19 @@ class AuthorizationView(APIView):
 
 
     def post(self, request):
+        updateLogs("[POST] "+request.path)
+
         if LoginService.check_credentials(request.POST['username'], request.POST['password']):
+            updateLogs("User credentials are valid")
+            
             code = AuthorizationView.generate_authorization_code(request.GET['client_id'], request.GET['redirect_uri'], request.GET['scope'])
+
+            updateLogs("Auth code generated: "+code)
+
             return redirect("{}?code={}&state={}".format(request.GET['redirect_uri'], code, request.GET['state']))
         else:
+            updateLogs("Invalid User credentials")
+
             return redirect("{}?error={}".format(request.GET['redirect_uri'], "access_denied"))
 
 
@@ -85,34 +100,45 @@ class AuthorizationView(APIView):
 class AddAccountView(APIView):
 
     def post(self, request):
+        updateLogs("[POST] "+request.path)
+
         LoginService.add_credentials(request.POST['username'], request.POST['password'])
+        updateLogs("User "+request.POST['username']+" created")
 
         return HttpResponse(status=204)
 
 class AddClientView(APIView):
 
     def post(self, request):
+        updateLogs("[POST] "+request.path)
+
         ClientService.add_credentials(request.POST['id'], request.POST['secret'])
+        updateLogs("Client "+request.POST['id']+" created")
 
         return HttpResponse(status=204)
 
 class GenerateTokenView(APIView):
 
     def post(self, request):
+        updateLogs("[POST] "+request.path)
+
         client_id = request.POST['client_id']
         client_secret = request.POST['client_secret']
         code = request.POST['code']
         redirect_uri = request.POST['redirect_uri']
 
         if not ClientService.check_credentials(client_id, client_secret):
+            updateLogs("Invalid Client credentials")
             return redirect("{}?error={}".format(redirect_uri, "invalid_client_credentials"))
 
         if not AuthCodeService.check_code(code):
+            updateLogs("Invalid auth code")
             return redirect("{}?error={}".format(redirect_uri, "invalid_auth_code"))
 
         client = ClientService.get_client(client_id)
         
         token = TokenService.add_token(client)
+        updateLogs("New token created: "+token.access)
 
         return redirect("{}?access={}&refresh={}".format(redirect_uri, token.access, token.refresh))
 
@@ -120,19 +146,54 @@ class GenerateTokenView(APIView):
 class RefreshTokenView(APIView):
 
     def post(self, request):
+        updateLogs("[POST] "+request.path)
+
         client_id = request.POST['client_id']
         client_secret = request.POST['client_secret']
         refresh_token = request.POST['refresh_token']
         redirect_uri = request.POST['redirect_uri']
 
         if not ClientService.check_credentials(client_id, client_secret):
+            updateLogs("Invalid client credentials")
             return redirect("{}?error={}".format(redirect_uri, "invalid_client_credentials"))
 
         client = ClientService.get_client(client_id)
 
         if not TokenService.check_refresh_token(refresh_token, client):
+            updateLogs("Invalid refresh token")
             return redirect("{}?error={}".format(redirect_uri, "invalid_refresh_token"))
 
         token = TokenService.refresh_token(refresh_token, client)
+        updateLogs("Refreshed token, new one: "+token.access)
 
         return redirect("{}?access={}&refresh={}".format(redirect_uri, token.access, token.refresh))
+
+class LoggerView(APIView):
+
+    def get(self, request):
+        updateLogs("[GET] "+request.path)
+
+        return render(request, 'logger.html', {
+            'logs' : logs
+        })
+
+class LogsView(APIView):
+
+    def get(self, request):
+
+        htmlLogs = []
+        for log in logs:
+            htmlLogs.append('<p class="log">'+log+'</p>')
+
+        return HttpResponse(htmlLogs)
+
+    def post(self, request):
+
+        updateLogs(request.POST['log'])
+
+def updateLogs(log):
+
+    if len(logs) >= 19:
+            logs.pop()
+
+    logs.insert(0, log)

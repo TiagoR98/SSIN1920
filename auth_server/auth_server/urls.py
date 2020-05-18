@@ -28,5 +28,8 @@ urlpatterns = [
     path('authorize',views.AuthorizationView.as_view()),
     path('new-user',views.AddAccountView.as_view()),
 
-    path('new-client',views.AddClientView.as_view())
+    path('new-client',views.AddClientView.as_view()),
+    
+    path('logger/', views.LoggerView.as_view()),
+    path('logs', views.LogsView.as_view()),
 ]

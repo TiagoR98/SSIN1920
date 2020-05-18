@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ client_id }}</title>
+
+    <style>
+        .logger_background_div {
+            background-color: black;
+            width: 750px;
+            height: 550px;
+        }
+
+        .logger_main_div {
+            padding: 10px;
+            width: 730px;
+            height: 530px;
+            display: flex;
+            flex-direction: column-reverse;
+            background-color: black;
+        }
+
+        .log {
+            margin: 5px;
+            color: white;
+        }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+
+<body>
+
+    <h1>Client logger</h1>
+
+    <div class="logger_background_div">
+        <div id="logger_main_div" class="logger_main_div">
+        
+        </div>
+    </div>
+
+</body>
+
+<script>
+    $(document).ready(function() {
+    $.ajaxSetup({ cache: false }); // This part addresses an IE bug.  without it, IE will only load the first number and will never refresh
+    var my_refresh = setInterval(function() {
+        $('#logger_main_div').load('/logs');
+    }, 1000);
+    });
+</script>
+
+</html>

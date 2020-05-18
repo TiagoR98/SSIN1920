@@ -22,5 +22,7 @@ urlpatterns = [
     path('', views.InitialView.as_view()),
     path('refresh-token/', views.RefreshTokenView.as_view()),
     path('get-token/', views.GetTokenView.as_view()),
-    path('get-resource/', views.GetResourceView.as_view())
+    path('get-resource/', views.GetResourceView.as_view()),
+    path('logger/', views.LoggerView.as_view()),
+    path('logs', views.LogsView.as_view()),
 ]
