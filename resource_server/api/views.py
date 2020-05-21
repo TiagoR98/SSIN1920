@@ -29,7 +29,6 @@ class ResourcePermission(permissions.BasePermission):
 
         token_string = request.headers['Authorization']
         token = jwt.decode(token_string, verify=False)
-        print(token)
 
         r = requests.post('http://auth-server:8000/token/verify/', data={"token": token_string})
         if r.status_code != 200:
@@ -46,7 +45,7 @@ class ResourcePermission(permissions.BasePermission):
         if request.method not in self.perms_map:
             raise exceptions.MethodNotAllowed(request.method)
 
-        scopes = token['scope'].split().append("")
+        scopes = token['scope'].split()
         return (self.perms_map[request.method] in scopes)
 
 class ResourceViewSet(viewsets.ModelViewSet):
