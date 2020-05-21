@@ -1,5 +1,6 @@
 from auth_server.models import Token
 from rest_framework_simplejwt.tokens import RefreshToken
+from datetime import datetime
 
 class TokenService:
 
@@ -12,6 +13,10 @@ class TokenService:
 
         return token
 
+    @staticmethod
+    def check_access_token(token):
+        return Token.objects.filter(access=token).filter(expiration__gt=datetime.now()).exists()
+    
     @staticmethod
     def check_refresh_token(refresh, client):
         return Token.objects.filter(refresh=refresh).filter(client=client).exists()

@@ -23,7 +23,7 @@ urlpatterns = [
 
     path('token', views.GenerateTokenView.as_view()),
     path('token/refresh/', views.RefreshTokenView.as_view()),
-    path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path('token/verify/', views.VerifyTokenView.as_view()),
 
     path('authorize',views.AuthorizationView.as_view()),
     path('new-user',views.AddAccountView.as_view()),
