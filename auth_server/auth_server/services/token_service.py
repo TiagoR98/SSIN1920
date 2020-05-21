@@ -5,10 +5,11 @@ from datetime import datetime
 class TokenService:
 
     @staticmethod
-    def add_token(client):
+    def add_token(client, scope):
         generated_token = RefreshToken.for_user(client)
+        generated_token['scope'] = scope
 
-        token = Token(access=str(generated_token.access_token), refresh=str(generated_token), client=client)
+        token = Token(access=str(generated_token.access_token), refresh=str(generated_token), client=client, scope=scope)
         token.save()
 
         return token
@@ -32,3 +33,7 @@ class TokenService:
         token.save()
 
         return token
+
+    @staticmethod
+    def get_token(token):
+        return Token.objects.get(access=token)

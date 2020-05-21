@@ -77,6 +77,7 @@ class Token(models.Model):
 	access = models.CharField(max_length=250, unique=True)
 	refresh = models.CharField(max_length=250, unique=True)
 	client = models.ForeignKey(Client, on_delete=models.CASCADE)
+	scope = models.CharField(max_length=50)
 	expiration =  models.DateTimeField(default=getExpiration)
 
 	def __str__(self):

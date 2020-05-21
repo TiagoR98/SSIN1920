@@ -3,7 +3,7 @@ import string
 import datetime
 
 from collections import Counter
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from rest_framework.views import APIView
 from django.shortcuts import render, redirect
 
@@ -136,8 +136,9 @@ class GenerateTokenView(APIView):
             return redirect("{}?error={}".format(redirect_uri, "invalid_auth_code"))
 
         client = ClientService.get_client(client_id)
+        scope = AuthCodeService.get_scope(code)
         
-        token = TokenService.add_token(client)
+        token = TokenService.add_token(client, scope)
         updateLogs("New token created: "+token.access)
 
         return redirect("{}?access={}&refresh={}".format(redirect_uri, token.access, token.refresh))
@@ -197,19 +198,3 @@ def updateLogs(log):
             logs.pop()
 
     logs.insert(0, log)
-
-
-class VerifyTokenView(APIView):
-
-    def post(self, request):
-        updateLogs("[POST] "+request.path)
-
-        token = request.POST['token']
-
-        if not TokenService.check_access_token(token):
-            error = "Invalid or expired access token"
-            updateLogs(error)
-            return HttpResponse(error, status=400)
-        else:
-            updateLogs("Valid token verified")
-            return HttpResponse(status=200)
